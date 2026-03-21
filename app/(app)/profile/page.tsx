@@ -62,17 +62,15 @@ export default function ProfilePage() {
 
           setBadges(badgeSnap.docs.map((d) => ({
             id: d.id,
-            user_id: user.uid,
             badge_id: d.id,
-            earned_at: d.data().earned_at,
+            earned_at: d.data().earned_at ?? "",
             badge: {
               id: d.id,
               name: BADGE_DEFS[d.id]?.name ?? d.id,
-              emoji: BADGE_DEFS[d.id]?.emoji ?? "🏅",
+              icon: BADGE_DEFS[d.id]?.emoji ?? "🏅",
               description: "",
-              condition_type: "",
+              condition_type: "reviews" as const,
               condition_value: 0,
-              created_at: "",
             },
           })) as UserBadge[]);
 
@@ -94,7 +92,7 @@ export default function ProfilePage() {
       const user = clientAuth.currentUser;
       if (user) {
         await updateDoc(doc(clientDb, "users", user.uid), { avatar_skin: selectedSkin });
-        setProfile((p) => ({ ...p, avatar_skin: selectedSkin }));
+        setProfile((p) => ({ ...p, avatar_skin: selectedSkin as UserProfile["avatar_skin"] }));
       }
     } catch { /* ignore */ }
     setSaving(false);

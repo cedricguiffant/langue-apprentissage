@@ -30,7 +30,7 @@ export default function BossFightPage() {
   const poolRef = useRef<VocabItem[]>([]);
   const [bossIdx, setBossIdx] = useState(0);
   const boss = BOSSES[bossIdx];
-  const [bossHp, setBossHp] = useState(boss.hp);
+  const [bossHp, setBossHp] = useState<number>(boss.hp);
   const [playerHp, setPlayerHp] = useState(PLAYER_HP);
   const [phase, setPhase] = useState<Phase>("intro");
   const [question, setQuestion] = useState<VocabItem | null>(null);

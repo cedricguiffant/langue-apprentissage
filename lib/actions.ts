@@ -3,7 +3,7 @@
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { adminDb, adminAuth } from "./firebase-admin";
-import { FieldValue } from "firebase-admin/firestore";
+import { FieldValue, Transaction, DocumentReference, DocumentData } from "firebase-admin/firestore";
 import type { VocabItem } from "@/data/japanese-core-vocab";
 
 const SRS_INTERVALS_HOURS = [0, 4, 8, 24, 72, 168, 336, 720, 2160, 8760];
@@ -27,8 +27,8 @@ async function getCurrentUid(): Promise<string | null> {
   }
 }
 
-function userRef(uid: string) {
-  return adminDb.collection("users").doc(uid);
+function userRef(uid: string): DocumentReference<DocumentData> {
+  return adminDb.collection("users").doc(uid) as DocumentReference<DocumentData>;
 }
 
 // ── Add XP ────────────────────────────────────────────────────────────────────
@@ -37,7 +37,7 @@ export async function addXP(amount: number) {
   if (!uid) return { error: "Not authenticated" };
 
   const ref = userRef(uid);
-  await adminDb.runTransaction(async (tx) => {
+  await adminDb.runTransaction(async (tx: Transaction) => {
     const snap = await tx.get(ref);
     if (!snap.exists) return;
     const data = snap.data()!;
@@ -235,7 +235,7 @@ export async function getLeaderboard() {
     .limit(10)
     .get();
 
-  return snap.docs.map((d) => ({
+  return snap.docs.map((d: import("firebase-admin/firestore").QueryDocumentSnapshot) => ({
     username:    d.data().username    ?? "?",
     avatar_skin: d.data().avatar_skin ?? "samurai",
     level:       d.data().level       ?? 1,

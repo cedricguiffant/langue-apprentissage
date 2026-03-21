@@ -92,12 +92,11 @@ export default async function DashboardPage() {
         }));
       }
 
-      badges = badgeSnap.docs.map((d) => ({
+      badges = badgeSnap.docs.map((d: import("firebase-admin/firestore").QueryDocumentSnapshot) => ({
         id: d.id,
-        user_id: uid,
         badge_id: d.id,
-        earned_at: d.data().earned_at,
-        badge: { id: d.id, name: d.id, emoji: "", description: "", condition_type: "", condition_value: 0, created_at: "" },
+        earned_at: d.data().earned_at ?? "",
+        badge: { id: d.id, name: d.id, icon: "🏅", description: "", condition_type: "reviews" as const, condition_value: 0 },
       })) as UserBadge[];
 
       leaderboard = lb;
